@@ -6,6 +6,7 @@
 Chaine::Chaine()
 {
 	this->array = new char[1];
+	std::cout << "Construcion d'une chaine de taille 0." << std::endl;
 
 	this->array[0] = '\0';
 }
@@ -14,6 +15,7 @@ Chaine::Chaine(char * c){
 	int size = strlen(c);
 
 	this->array = new char[size + 1];
+	std::cout << "Construcion d'une chaine de taille " << size << "." << std::endl;
 
 	for (int i = 0; i < size; i++){
 		this->array[i] = c[i];
@@ -25,6 +27,7 @@ Chaine::Chaine(Chaine& c){
 	int l = c.len();
 
 	this->array = new char[l];
+	std::cout << "Construcion d'une chaine de taille " << l << "." << std::endl;
 
 	for (int i = 0; i < l; i++){
 		this->array[i] = c[i];
@@ -36,6 +39,7 @@ Chaine::Chaine(Chaine & c, int d, int f){
 	int l_cut = f - d;
 
 	this->array = new char(l_cut + 1);
+	std::cout << "Construcion d'une chaine de taille " << l_cut << "." << std::endl;
 
 	for (int i = 0; i < l_cut; i++){
 		this->array[i] = c[d + i];
@@ -60,32 +64,39 @@ char Chaine::operator[](int b){
 
 Chaine::~Chaine()
 {
+	std::cout << "Destruction de la chaine." << std::endl;
 	delete this->array;
 }
 
 
 Chaine Chaine::operator+(Chaine b){
-	Chaine result = Chaine(*this);
+	Chaine result = Chaine();
 
-	return result += b;
+	result += *this;
+	result += b;
+
+	return result;
 }
 
 Chaine Chaine::operator+=(Chaine b){
 	int l1 = this->len();
 	int l2 = b.len();
+	
 
-	char* na = new char[l1 + l2 + 1];
+	char * ra = new char[l1 + l2 + 1];
 
 	for (int i = 0; i < l1; i++){
-		na[i] = this->array[i];
+		ra[i] = this->array[i];
 	}
 	for (int j = 0; j < l2; j++){
-		na[l1 + j] = b[j];
+		ra[l1 + j] = b[j];
 	}
-	na[l1 + l2] = '\0';
+	ra[l1 + l2] = '\0';
 
 	delete this->array;
-	this->array = na;
+	this->array = ra;
+
+	return *this;
 }
 
 
@@ -141,7 +152,7 @@ int Chaine::find(char c){
 }
 
 Chaine Chaine::sous_chaine(char deb, char fin){
-	sous_chaine(this->find(deb), this->find(fin));
+	return sous_chaine(this->find(deb), this->find(fin));
 }
 
 Chaine Chaine::sous_chaine(int ind_deb, int ind_fin){
@@ -152,4 +163,9 @@ Chaine Chaine::sous_chaine(int ind_deb, int ind_fin){
 	}
 	
 	return Chaine(*this, ind_deb, ind_fin);
+}
+
+std::ostream& operator<<(std::ostream& os, const Chaine& c){
+	os << c.array;
+	return os;
 }

@@ -1,4 +1,7 @@
 #pragma once
+
+#include <iostream>
+
 class Chaine
 {
 	char * array;
@@ -27,6 +30,8 @@ public:
 
 	inline char operator[](int b);
 
+	friend std::ostream& operator<<(std::ostream& os, const Chaine& c);
+
 	Chaine sous_chaine(char deb, char fin);
 	Chaine sous_chaine(int ind_deb, int ind_fin);
 
@@ -34,6 +39,6 @@ public:
 
 	int len();
 
-	virtual ~Chaine();
+	~Chaine();
 };
 
