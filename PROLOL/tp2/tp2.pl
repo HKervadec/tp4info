@@ -85,10 +85,6 @@ est_carte(carte(H,C)):-
 	couleur(C),
 	hauteur(H).
 
-% Test:
-% ?-est_carte(C).
-% Obtient 52 resultats.
-
 % ============================================================================= 
 %	QUESTION 2 : est_main(main(C1,C2,C3,C4,C5))
 % ============================================================================= 
@@ -123,22 +119,11 @@ inf_hauteur(H1,H2):-
 	succ_hauteur(H1,X),
 	inf_hauteur(X,H2).
 
-% Test
-% > ?-inf_hauteur(carte(deux,trefle),carte(trois,trefle)).
-% YES
-% > ?-inf_hauteur(carte(deux,coeur),carte(neuf,carreau)).
-% YES
-% > ?-inf_hauteur(carte(quatre,carreau),carte(deux,trefle)).
-% NO
-
 inf_couleur(C1,C2):-
 	succ_couleur(C1,C2).
 inf_couleur(C1,C2):-
 	succ_couleur(C1,X),
 	inf_couleur(X,C2).
-
-% Test
-% > ?-inf_couleur(carte(deux,trefle),carte(deux,pique)).
 
 inf_carte(carte(H1,_),carte(H2,_)):-
 	inf_hauteur(H1,H2).
@@ -157,6 +142,7 @@ inf_carte(carte(H,C1),carte(H,C2)):-
 %       QUESTION 4 : est_main_triee(main(C1,C2,C3,C4,C5))
 % ==============================================================================
 est_main_triee(main(C1,C2,C3,C4,C5)):-
+	est_main(C1,C2,C3,C4,C5),
 	inf_carte(C1,C2),
 	inf_carte(C2,C3),
 	inf_carte(C3,C4),
@@ -219,6 +205,21 @@ full(main(carte(H1,_),carte(H1,_),carte(H1,_),carte(H2,_),carte(H2,_))):-
 
 /* TESTS QUESTION 1 : carte_test
 
+[eclipse 2]: ?-est_carte(C).
+
+C = carte(deux, trefle)
+Yes (0.00s cpu, solution 1, maybe more) ? ;
+
+C = carte(trois, trefle)
+Yes (0.00s cpu, solution 2, maybe more) ? ;
+
+...
+
+C = carte(roi, pique)
+Yes (0.00s cpu, solution 51, maybe more) ? ;
+
+C = carte(as, pique)
+Yes (0.00s cpu, solution 52)
 
 */
 
@@ -226,13 +227,47 @@ full(main(carte(H1,_),carte(H1,_),carte(H1,_),carte(H2,_),carte(H2,_))):-
 
 /*  TESTS QUESTION 2 : est_main
 
+[eclipse 4]: ?-est_main(M).
 
+M = main(carte(deux, trefle), carte(trois, trefle), carte(quatre, trefle), carte(cinq, trefle), carte(six, trefle))
+Yes (0.00s cpu, solution 1, maybe more) ? ;
+
+M = main(carte(deux, trefle), carte(trois, trefle), carte(quatre, trefle), carte(cinq, trefle), carte(sept, trefle))
+Yes (0.00s cpu, solution 2, maybe more) ? ;
+
+...
+
+M = main(carte(deux, trefle), carte(trois, trefle), carte(quatre, trefle), carte(cinq, trefle), carte(deux, carreau))
+Yes (0.01s cpu, solution 10, maybe more) ? ;
+
+...
+
+M = main(carte(deux, trefle), carte(trois, trefle), carte(quatre, trefle), carte(roi, trefle), carte(quatre, carreau))
+Yes (0.04s cpu, solution 396, maybe more) ? ;
+
+M = main(carte(deux, trefle), carte(trois, trefle), carte(quatre, trefle), carte(roi, trefle), carte(cinq, carreau))
+Yes (0.04s cpu, solution 397, maybe more) ? 
+
+etc...
 
 */
 
 % ============================================================================= 
 
 /* TESTS QUESTION 3 premiere version
+
+[eclipse 5]: ?-inf_carte(carte(deux,coeur),carte(roi,trefle)).
+
+Yes (0.00s cpu, solution 1, maybe more) ? 
+
+[eclipse 6]: ?-inf_carte(carte(roi, trefle),carte(dix,pique)).
+
+No (0.00s cpu)
+
+[eclipse 7]: ?-inf_carte(carte(roi,trefle),carte(roi,pique)).
+
+Yes (0.00s cpu, solution 1, maybe more) ? 
+
 
 */
 
@@ -246,12 +281,29 @@ full(main(carte(H1,_),carte(H1,_),carte(H1,_),carte(H2,_),carte(H2,_))):-
 
 /* TESTS QUESTION 4
 
+[eclipse 9]: ?-est_main_triee(main(carte(deux,trefle),carte(trois,coeur),carte(sept,trefle),carte(roi,trefle),carte(roi,pique))).
+
+Yes (0.00s cpu, solution 1, maybe more) ? 
+
+[eclipse 10]: ?-est_main_triee(main(carte(deux,trefle),carte(trois,coeur),carte(sept,trefle),carte(roi,pique),carte(roi,trefle))).
+
+No (0.00s cpu)
+
 
 */
 
 % ============================================================================= 
 
 /* TESTS QUESTION 5
+
+[eclipse 11]: ?-une_paire(main(carte(deux,trefle),carte(deux,coeur),carte(trois,trefle),carte(quatre,coeur),carte(roi,coeur))).
+
+Yes (0.00s cpu, solution 1, maybe more) ? 
+
+[eclipse 13]: ?-une_paire(main(carte(deux,trefle),carte(trois,trefle),carte(cinq,trefle),carte(sept,coeur),carte(roi,coeur))).
+
+No (0.00s cpu)
+
 
 
 */
@@ -260,6 +312,13 @@ full(main(carte(H1,_),carte(H1,_),carte(H1,_),carte(H2,_),carte(H2,_))):-
 
 /* TESTS QUESTION 6
 
+[eclipse 15]: ?-deux_paires(main(carte(deux,trefle),carte(deux,coeur),carte(trois,trefle),carte(trois,coeur),carte(roi,coeur))).
+
+Yes (0.00s cpu, solution 1, maybe more) ? 
+
+[eclipse 16]: ?-deux_paires(main(carte(deux,trefle),carte(deux,coeur),carte(trois,trefle),carte(quatre,coeur),carte(roi,coeur))).
+
+No (0.00s cpu)
 
 */
 
@@ -267,6 +326,13 @@ full(main(carte(H1,_),carte(H1,_),carte(H1,_),carte(H2,_),carte(H2,_))):-
 
 
 /* TESTS QUESTION 7
+[eclipse 17]: ?-brelan(main(carte(deux,trefle),carte(deux,coeur),carte(deux,trefle),carte(trois,coeur),carte(roi,coeur))).
+
+Yes (0.00s cpu, solution 1, maybe more) ? 
+
+[eclipse 18]: ?-brelan(main(carte(deux,trefle),carte(deux,coeur),carte(trois,trefle),carte(trois,coeur),carte(roi,coeur))).
+
+No (0.00s cpu)
 
 
 */
@@ -275,6 +341,14 @@ full(main(carte(H1,_),carte(H1,_),carte(H1,_),carte(H2,_),carte(H2,_))):-
 
 /* TESTS QUESTION 8
 
+[eclipse 19]: ?-suite(main(carte(quatre,trefle),carte(cinq,coeur),carte(six,pique),carte(sept,carreau),carte(huit,pique))).
+
+Yes (0.00s cpu)
+
+[eclipse 20]: ?-suite(main(carte(quatre,trefle),carte(cinq,coeur),carte(six,pique),carte(sept,carreau),carte(dame,pique))).
+
+No (0.00s cpu)
+
 
 */
 
@@ -282,5 +356,12 @@ full(main(carte(H1,_),carte(H1,_),carte(H1,_),carte(H2,_),carte(H2,_))):-
 
 /* TESTS QUESTION 9
 
+[eclipse 21]: ?-full(main(carte(trois,pique),carte(trois,carreau),carte(roi,pique),carte(roi,trefle),carte(roi,carreau))).
+
+Yes (0.00s cpu, solution 1, maybe more) ? 
+
+[eclipse 22]: ?-full(main(carte(trois,pique),carte(trois,carreau),carte(dame,pique),carte(roi,trefle),carte(roi,carreau))).
+
+No (0.00s cpu)
 
 */
