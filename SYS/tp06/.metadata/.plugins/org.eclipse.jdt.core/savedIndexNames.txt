@@ -1,0 +1,17 @@
+INDEX VERSION 1.126+/home-reseau/conicole/4INFO/Repos_Git/tp4info/SYS/tp06/.metadata/.plugins/org.eclipse.jdt.core
+2957997859.index
+300945321.index
+1432090843.index
+968628963.index
+3202846439.index
+514833894.index
+3436797218.index
+619032385.index
+1971188696.index
+568199575.index
+1925660609.index
+245627129.index
+4142594987.index
+1322551043.index
+1540287577.index
+3250272203.index

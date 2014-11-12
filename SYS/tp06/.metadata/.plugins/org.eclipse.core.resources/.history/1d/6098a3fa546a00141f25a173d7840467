@@ -1,0 +1,55 @@
+package tp6;
+
+public class Semaphore {
+	
+	int cpt;
+	
+	
+	public Semaphore(){
+
+	}
+	
+	public void init(int x){
+		cpt = x;
+	}
+		 
+	public void p() throws InterruptedException{
+
+			
+			//Object o = new Object();
+		
+		synchronized(this){
+			if(cpt == 0){
+				this.wait();
+				System.out.println("BLOOOOCAGE");
+			}
+			else {
+				cpt--;
+			}
+			
+		}
+		
+
+
+	}
+	
+	synchronized void v() {}
+		 
+		
+
+
+
+	public static void main(String[] args) {
+		Semaphore s = new Semaphore();
+			s.init(1);
+			/* création des threads */
+			ThreadTP6 t1 = new ThreadTP6(s,"thread numero 1");
+			ThreadTP6 t2 = new ThreadTP6(s,"thread numero 2");
+			
+			// lunch
+			t1.start();
+			t2.start();
+			
+	}
+	
+}
