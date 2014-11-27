@@ -148,20 +148,73 @@ ensemble_comp2([A|R], L):-
 	append(L1, L2, L).
 
 % Q 3.2
-% Suppose que ensemble_comp est valide
-% A fixer
-piece_total(C, Total):-
-	ensemble_comp(C, Ens),
-	sum_ens(Ens, Total).
+nombre_piece(Composant,NombreRes) :-
+	findall((Piece,Qte),assemblage(Composant,Piece,Qte),EnsembleComp),
+	nombre_piece_liste(EnsembleComp,Res),
+	somme_liste(Res,NombreRes).
 
-sum_ens([], 0).
-sum_ens([A|R], T):-
-	sum_ens(R, Q2),
-	assemblage(_, A, Q1),
-	T is Q1 + Q2.
+nombre_piece_liste([],[]).
+
+nombre_piece_liste([(P,Qt)|Reste],Res) :-
+ 	findall((Piece,Qte),assemblage(P,Piece,Qte),[(A,B)|C]), %composant
+	multiplier_liste([(A,B)|C],Qt,EnsembleCompF),
+	nombre_piece_liste(Reste,Res1),
+	nombre_piece_liste(EnsembleCompF,Res2),
+	append(Res1,Res2,Res).
+
+nombre_piece_liste([(P,Qt)|Reste],Res) :-
+ 	findall((Piece,Qte),assemblage(P,Piece,Qte),[]), %objet final
+	nombre_piece_liste(Reste,Res2),
+	append([(P,Qt)],Res2,Res).
+
+multiplier_liste([],_,[]).
+
+multiplier_liste([(P,Qt)|Reste],Qte,[(P,Qtres)|ListeRes]) :-
+	Qtres is *(Qt,Qte),
+	multiplier_liste(Reste,Qte,ListeRes).
+		
+somme_liste([],0).
+
+somme_liste([(_,Qt)|Reste],Res) :-
+	somme_liste(Reste,Res2),
+	Res is +(Res2,Qt).
+
 
 
 % Q 3.3
+
+jointure_piece(NomPiece,Qte):-
+	piece(NumPiece,NomPiece,_),
+	livraison(_,NumPiece,Qte).
+
+nb_piece_dispo(NomPiece,Nb) :-
+	findall((NomPiece,Qte),jointure_piece(NomPiece,Qte),Res),
+	somme_liste(Res,Nb).
+
+nb_compo_pour_une_voiture(_,[],0).
+nb_compo_pour_une_voiture(Piece,[(Piece,Qte)|_],Qte).
+nb_compo_pour_une_voiture(PieceA,[(PieceB,_)|Reste],Qte) :-
+	\==(PieceA,PieceB),
+	nb_compo_pour_une_voiture(PieceA,Reste,Qte). 
+
+nb_voiture_par_compo(Piece,Res) :-
+ 	nb_piece_dispo(Piece,Nb_piece_dispo),
+ 	nombre_piece_liste([(voiture,1)],ListeCompo),
+ 	nb_compo_pour_une_voiture(Piece,ListeCompo,Nb_piece_necessaire),
+	Res is //(Nb_piece_dispo,Nb_piece_necessaire).
+
+nb_voiture_liste([],0).
+nb_voiture_liste([A],Res) :-
+	nb_voiture_par_compo(A,Res),
+	!.
+nb_voiture_liste([A|B],Res) :-
+	nb_voiture_par_compo(A,Res1),
+	nb_voiture_liste(B,Res2),
+	Res is min(Res1,Res2).
+
+nb_voiture(Res) :-
+	findall(Piece,piece(_, Piece,_),ListePiece), %Il faudrait éliminer les doublons
+	nb_voiture_liste(ListePiece,Res).
 
 
 
@@ -407,6 +460,28 @@ Yes (0.00s cpu)
 
 T = 20
 Yes (0.00s cpu)
+
+===============================================================================
+
+[eclipse 2]: nombre_piece(moteur,R).
+
+R = 20
+Yes (0.00s cpu)
+
+[eclipse 4]: nombre_piece(voiture,R).
+
+R = 36
+Yes (0.00s cpu, solution 1, maybe more) ? ;
+
+No (0.00s cpu)
+
+===============================================================================
+[eclipse 5]: nb_voiture(Res).
+
+Res = 62
+Yes (0.00s cpu, solution 1, maybe more) ? ;
+
+No (0.00s cpu)
 
 
 
