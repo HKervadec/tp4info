@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include <time.h>
+
 // Page fault handler
 //     Free one page if needed
 //     Get free page
@@ -36,44 +38,42 @@ page_virt* allocated_pages;
 int allocated_pages_capacity;
 int allocated_pages_size;
 int allocated_pages_first;
+int allocated_pages_free;
 
 
 
 
 void init_faultHandler(int nb_pages_virt, int nb_pages_phys){
+	srand(time(NULL));
 	int i;
-	page_table=(struct page_table_entry*)malloc(sizeof(struct page_table_entry)*nb_pages_virt);
-	page_table_size=nb_pages_virt;
-	for(i=0;i<nb_pages_virt;i++){
-		page_table[i].pp=INVALID;
-		page_table[i].status=NOTMAPPED;
+	page_table = (struct page_table_entry*)malloc(sizeof(struct page_table_entry)*nb_pages_virt);
+	page_table_size = nb_pages_virt;
+	for(i = 0 ; i < nb_pages_virt ; i++){
+		page_table[i].pp = INVALID;
+		page_table[i].status = NOTMAPPED;
 	}
 
-	allocated_pages=(page_virt*)malloc(sizeof(page_virt)*nb_pages_phys);
-	allocated_pages_capacity=nb_pages_phys;
-	for(i=0;i<nb_pages_phys;i++){
-		allocated_pages[i]=INVALID;
+	allocated_pages = (page_virt*)malloc(sizeof(page_virt)*nb_pages_phys);
+	allocated_pages_capacity = nb_pages_phys;
+	for(i = 0 ; i < nb_pages_phys ; i++){
+		allocated_pages[i] = INVALID;
 	}
-
 }
 
 void unloadAPage();
 void loadAPage(page_virt pv);
 
 void page_fault_handler(page_virt pv){
-
-
-
 	// Get a Free block
 	if(pm_isFull()){
 		printf("PF: Unload a page\n");
-		unloadAPage();
+		unloadAPage(); // fill
 	}
 	page_phys pp = pm_getFreePage();
 
 	// Mark page as loaded
 	printf("PF: Load a page (%d)\n",pv);
-	loadAPage(pv);
+	loadAPage(pv); // fill
 
 	// Read from Swap
 	if(page_table[pv].status == SWAPPED){
@@ -102,17 +102,32 @@ void loadAPage(page_virt pv){
 
 #ifdef POLICY_RANDOM
 void unloadAPage(){
-	// Fill
+	int pp_id = rand() % allocated_pages_capacity;
+
+	page_virt pv = allocated_pages[pp_id];
+	page_phys pp = page_table[pv].pp;
+
+	swap_write(pv, pp);
+	page_table[pv].status = SWAPPED;
+
+	allocated_pages[pp_id] = INVALID;
+	pm_freePage(pp);
+
+	mmu_invalidatePage(pv);
+
+	allocated_pages_free = pp_id;
 }
 
 void loadAPage(page_virt pv){
-	// Fill
+	allocated_pages[allocated_pages_free++] = pv;
 }
 #endif
 
 #ifdef POLICY_CLOCK
 void unloadAPage(){
-	// Fill
+
+
+	// 
 }
 
 void loadAPage(page_virt pv){
