@@ -13,7 +13,7 @@ TP 10 Prolog
 % dana likes everyone bess likes
 % everybody likes somebody
 
-people([abby, bess, cody, dana]).
+people([abby, bess, cody, dana, peter]).
 
 % =======================================
 % Q 1.1
@@ -160,36 +160,94 @@ enum([_|R], Res):-
 % Q 1.3
 % =====
 
-proposition1([likes(dana, cody)|_]).
-proposition1([likes(A, B)|R]):-
-	\==(A, dana),
-	\==(B, cody),
-	proposition1(R).
+proposition1(LiekList) :-
+	member(likes(dana,cody),LiekList).
 
-/*
-?-proposition1([likes(dana, cody)]).
-?-proposition1([likes(cody, dana)]).
+proposition2(LiekList) :-
+	not(member(likes(bess,dana),LiekList)).
+
+proposition3(LiekList) :-
+	not(member(likes(cody,abby),LiekList)).
+
+proposition4(LiekList) :-
+	prop4(LiekList,LiekList).
+
+prop4([likes(X,Y)|Reste],LiekList) :-
+	member(likes(Y,X),LiekList),
+	prop4(Reste,LiekList).
+
+prop4([],_).
+
+proposition5(LiekList) :-
+	prop5(LiekList,LiekList).
+
+prop5([],_).
+
+prop5([likes(X,bess)|Reste],LiekList) :-
+	member(likes(abby,X),LiekList),
+	prop5(Reste,LiekList).
+
+prop5([likes(_,Y)|Reste],LiekList) :-
+	\==(Y,bess),
+	prop5(Reste,LiekList).
+
+proposition6(LiekList) :-
+	prop6(LiekList,LiekList).
+
+prop6([],_).
+
+prop6([likes(bess,X)|Reste],LiekList) :-
+	member(likes(dana,X),LiekList),
+	prop6(Reste,LiekList).
+
+prop6([likes(Y,_)|Reste],LiekList) :-
+	\==(Y,bess),
+	prop6(Reste,LiekList).
+
+
+proposition7(LiekList) :-
+        people(ListePersonnes),
+        prop7(ListePersonnes,LiekList).
+
+prop7([],_).
+
+prop7([Personne|RestePersonne],LiekList) :-
+        member(likes(Personne,_),LiekList),
+        prop7(RestePersonne,LiekList),
+        !.
+
+% =======================================
+% Q 1.4
+% =====
+
+possible_worlds(World) :-
+        people(ListePersonnes),
+        make_all_pairs(ListePersonnes,ListePaires),
+        sub_list(ListePaires,World),
+        proposition1(World),
+        proposition2(World),
+        proposition3(World),
+        proposition4(World),
+        proposition5(World),
+        proposition6(World),
+        proposition7(World).
+
+/* 
+[eclipse 14]: possible_worlds(W).
+	W = [likes(abby, bess), likes(bess, abby), likes(abby, dana), likes(dana, abby), likes(abby, abby), likes(cody, dana), likes(dana, cody), likes(cody, cody), likes(dana, dana)]
+	Yes (0.04s cpu, solution 1, maybe more) ? ;
+
+	W = [likes(abby, bess), likes(bess, abby), likes(abby, dana), likes(dana, abby), likes(abby, abby), likes(cody, dana), likes(dana, cody), likes(cody, cody)]
+	Yes (0.04s cpu, solution 2, maybe more) ? ;
+
+	W = [likes(abby, bess), likes(bess, abby), likes(abby, dana), likes(dana, abby), likes(abby, abby), likes(cody, dana), likes(dana, cody), likes(dana, dana)]
+	Yes (0.04s cpu, solution 3, maybe more) ? ;
+
+	W = [likes(abby, bess), likes(bess, abby), likes(abby, dana), likes(dana, abby), likes(abby, abby), likes(cody, dana), likes(dana, cody)]
+	Yes (0.04s cpu, solution 4, maybe more) ? ;
+
+	No (0.05s cpu)
 */
-
-proposition2([]).
-proposition2([likes(A, B)|R]):-
-	\==(A, bess),
-	\==(B, dana),
-	proposition2(R).
-
-proposition3([]).
-proposition3([likes(A, B)|R]):-
-	\==(A, cody),
-	\==(B, abby),
-	proposition2(R).
-
-proposition4([likes(A, B)|R]):-
-	proposition4(R),
-	proposition42(A, B, R).
-proposition42(A, B, [likes(B, A)|R]):-
-	proposition42(A, B, R).
-
-
 
 
 
@@ -198,3 +256,11 @@ test_possible_worlds :-
         possible_worlds(World),
         writeln(World),
         fail.
+
+/*
+Changer litteraux: change rien (logique).
+
+
+4 membres: 65 536 mondes testés (~ 2^(2^4))
+5 membres: 33 554 432 mondes testés (~ 2^(2^5)))
+*/

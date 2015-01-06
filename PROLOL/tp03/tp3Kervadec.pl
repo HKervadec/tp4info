@@ -12,6 +12,7 @@ liste3([1,2,3,4,3,2,1]).
 liste4([1,2,3,4,4,3,2,1]).
 liste5([1,2,3]).
 liste6([4,4]).
+liste7([6,3,4,6,8,231,7,9,53,2]).
 
 /* Q 1.1 */
 membre(E,[E|_]).
@@ -344,8 +345,85 @@ inserer(E,[Elem|Rest1],[Elem|L2]):-
 	E>Elem,
 	inserer(E,Rest1,L2).
 
+tri(L1,L2) :- tri(L1,[],L2).
+tri([],List,List).
+tri([Elem|RestL1],Accumulateur,Resul):-
+  inserer(Elem,Accumulateur,ListTemp),
+  tri(RestL1,ListTemp,Resul).
+
+/* 
+
+[eclipse 3]: ?-liste7(X),tri(X,Y).
+
+X = [6, 3, 4, 6, 8, 231, 7, 9, 53, 2]
+Y = [2, 3, 4, 6, 6, 7, 8, 9, 53, 231]
+Yes (0.00s cpu, solution 1, maybe more) ? ;
+
+No (0.00s cpu)
+*/
+
+/* Q 2.1 */
+inclus([],_).
+inclus([Elem|Rest],Y):-
+  membre(Elem,Y),
+  inclus(Rest,Y).
+
+/* 
+[eclipse 10]: ?-liste4(X),liste5(Y),inclus(X,Y).
+
+No (0.00s cpu)
+[eclipse 11]: ?-liste5(X),liste4(Y),inclus(X,Y).
+
+X = [1, 2, 3]
+Y = [1, 2, 3, 4, 4, 3, 2, 1]
+Yes (0.00s cpu, solution 1, maybe more) ? 
+*/   
 
 
+/* Q 2.2 */
+non_inclus([Elem|_],Y):-
+        hors_de(Elem,Y),
+        !.
+non_inclus([Elem|Rest],Y):-
+        membre(Elem,Y),
+        non_inclus(Rest,Y).
+
+/* 
+[eclipse 8]: ?-liste4(X),liste5(Y),non_inclus(X,Y).
+
+X = [1, 2, 3, 4, 4, 3, 2, 1]
+Y = [1, 2, 3]
+Yes (0.00s cpu, solution 1, maybe more) ? ;
+
+No (0.01s cpu)
+[eclipse 9]: ?-liste5(X),liste4(Y),non_inclus(X,Y).
+
+No (0.00s cpu)
+
+
+
+*/      
+
+/* Q 2.3 */
+union_ens([],Y,Y).
+union_ens(X,[],X).
+union_ens([Elem1|Rest1],Y,[Elem1|Rest2]):-
+        hors_de(Elem1,Y),
+        union_ens(Rest1,Y,Rest2).
+union_ens([Elem1|Rest1],Y,Z):-
+        membre(Elem1,Y),
+        union_ens(Rest1,Y,Z).
+
+/* 
+[eclipse 5]: ?-liste1(X),liste7(Y),union_ens(X,Y,Z).
+
+X = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+Y = [6, 3, 4, 6, 8, 231, 7, 9, 53, 2]
+Z = [1, 5, 6, 3, 4, 6, 8, 231, 7, 9, 53, 2]
+Yes (0.00s cpu, solution 1, maybe more) ? ;
+
+No (0.00s cpu)
+*/    
 
 
 
