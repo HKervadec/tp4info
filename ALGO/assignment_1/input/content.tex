@@ -96,7 +96,7 @@ int Max(TempDB D, int t1, int t2):
 	return max([D.get(t).getMax() for t in ts])
 \end{lstlisting}
 
-	However, the complexity of the second function would no so great. We could improve it with the next hash optimization.
+	However, the complexity of the second function would not be so great. We could improve it with the next hash optimization.
 
 	\subsection{Hash optimization}
 		Hash function is always a big question in hashmaps. At the moment, we can use the date as a hash, but with some assumption, we could do far better.
@@ -110,8 +110,8 @@ int Max(TempDB D, int t1, int t2):
 		Now, we could rewrite our second $Max$ function, to use this new property:
 \begin{lstlisting}
 int Max(TempDB D, int t1, int t2):
-	tt1 = to_timestamp(t1)
-	tt2 = to_timestamp(t2)
+	tt1 = to_timestamp(t1) - tt_0
+	tt2 = to_timestamp(t2) - tt_0
 
 	ts = [tt1 + i*p for i in range(0, (tt2 - tt1)/p)]
 
