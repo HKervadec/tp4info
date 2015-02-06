@@ -1,0 +1,93 @@
+\section{Description of the problem}
+	The aim of this problem is to find the length of the shortest path of a rooted tree, using dynamic programming. Each edge will have a weight, either positive or negative.
+
+	The complexity should be at worst $\mathcal{O}(n)$.
+
+\section{Setup}
+	To test my solution, I implemented a really simple tree in python. This way, I'll be able to run my algorithm and to evaluate them easily.
+	The rooted tree will have two attributes: the sons (which is a list of trees), and its weight.
+\begin{lstlisting}
+class Tree:
+    def __init__(self, w, s=[]):
+        self.weight = w
+        self.sons = s
+
+	def size(self):
+        return 1 + sum([s.size() for s in self.sons] or [0])
+\end{lstlisting}
+
+	\newpage	
+	I will have tw 	o trees as example:
+\begin{lstlisting}
+example_1 = Tree(0,[Tree(5,[Tree(-4,[Tree(11),
+                                  Tree(2)]),
+                          Tree(2)]),
+                  Tree(2,[Tree(5,[Tree(-2),
+                                  Tree(4),
+                                  Tree(7)])]),
+                  Tree(1,[Tree(10)])])
+
+example_2 = Tree(5,[Tree(1,[Tree(-5,[Tree(7,[]),
+                                     Tree(3,[])]),
+                             Tree(2,[]),
+                             Tree(11,[Tree(-5,[])])]),
+                    Tree(2,[Tree(0,[Tree(12,[])])]),
+                    Tree(3,[Tree(7,[Tree(2,[])]),
+                            Tree(2,[])])])
+\end{lstlisting}
+
+\section{The algorithm}
+	The solution is pretty simple:
+\begin{lstlisting}
+def min_length(T):
+    return T.weight + min([min_length(s) for s in T.sons] or [0])
+\end{lstlisting}
+	We will start with the leaves, and then go back up. Indeed, the minimal path to a node is the minimum of its sons, plus its own weight.
+
+\section{Evaluation}
+	We can easily prove (using mathematical induction) that the complexity will be $\mathcal{O}(n)$ in the best, average and worst case.
+	Still, it is safer to run the algorithm to be sure.
+
+\begin{lstlisting}
+## Example 1:
+Min length: 3
+Size: 13
+         43 function calls (19 primitive calls) in 0.000 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime filename:lineno(function)
+        1    0.000 :0(exec)
+       13    0.000 :0(min)
+        1    0.000 :0(setprofile)
+        1    0.000 <string>:1(<module>)
+     13/1    0.000 assigment_2.py:5(min_length)
+     13/1    0.000 assigment_2.py:6(<listcomp>)
+        1    0.000 profile:0(min_length(example_1))
+        0    0.000 profile:0(profiler)
+
+
+
+## Example 2:
+Min length: 4
+Size: 15
+         49 function calls (21 primitive calls) in 0.000 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime filename:lineno(function)
+        1    0.000 :0(exec)
+       15    0.000 :0(min)
+        1    0.000 :0(setprofile)
+        1    0.000 <string>:1(<module>)
+     15/1    0.000 assigment_2.py:5(min_length)
+     15/1    0.000 assigment_2.py:6(<listcomp>)
+        1    0.000 profile:0(min_length(example_2))
+        0    0.000 profile:0(profiler)
+\end{lstlisting}
+	We can clearly see that the number of calls of the function min\_length does not exceed the size of the trees.
+
+\section{Conlusion}
+	Due to the nature of the weight (can be negative), some other approach have been prevented. For instance, we could avoid to evaluate some branch of the trees, because the weight could only go up.
+
+	Nonetheless, a $\mathcal{O}(n)$ solution is still pretty good.
