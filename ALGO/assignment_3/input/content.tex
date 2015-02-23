@@ -1,0 +1,137 @@
+\section{Problem 1}
+    \subsection{Description}
+        This aim of this problem is to prove that the amortized cost of the $Insert$ method on a min-heap is $\mathcal{O}(\log_2n)$. There is two steps in the resolution.
+
+    \subsection{Potential function}
+        The function $f$ suggested in the exercise takes an heap as an input, to return a number. Every heap possible is covered.
+
+        That's the definition of a potential function.
+
+    \subsection{Amortized cost}
+        The amortized cost is the average cost of $n$ operations using the worst case complexity.
+
+        We will start with an empty heap ($D_0$), and then do $n$ insert.
+        \begin{align}
+        \hat{c}_i &= c_i + f(D_i) - f(D_{i-1})\\\nonumber
+            &= \log_2i + 2i\ln i + 2(i-1)\ln(i-1)\\\nonumber
+            \\\nonumber
+        \sum_{i=1}^{n} \hat{c}_i &= \sum_{i=1}^{n}(\log_2i + 2i\ln i + 2(i-1)\ln(i-1))\\\nonumber
+            &= \sum_{i=1}^{n}\log_2i + 2n\ln n + 2(0)\ln(0)\\\nonumber
+            &= \sum_{i=1}^{n}\log_2i + 2n\ln n\\\nonumber
+            &\leq n\log_2n + 2n\ln n\\\nonumber
+            \\\nonumber
+        A &\leq \log_2n + 2\ln n\\\nonumber 
+        \end{align}
+
+        Unfortunately, I wasn't able to go further.   
+
+
+
+\section{Problem 2}
+    \subsection{Description}
+        The aim of this problem is to find if there is or not negative cycles in a weighted graph.
+        If such cycles exist, the algorithm should return the length of the smallest cycle.
+
+    \subsection{Setup}
+    \label{sec:2_setup}
+        The graph will be represented as a list of arcs. An arc will contain the origin, the destination and the weight. For my tests, I created a class to contain the arcs.
+
+         \begin{lstlisting}
+class Arc:
+    def __init__(self, a, b, w=0):
+        self.a = a
+        self.b = b
+        self.w = w
+        \end{lstlisting}
+
+        I also defined a example graph.
+        \begin{lstlisting}
+g1 = [Arc("a", "b", 2),
+    Arc("b", "a", 2),
+    Arc("a", "c", 3),
+    Arc("b", "d", 5),
+    Arc("c", "b", 0),
+    Arc("c", "d", 1),
+    Arc("d", "e", 2),
+    Arc("e", "c", -4)]
+        \end{lstlisting}
+        We can note that there is a negative cycle, between \verb|c|, \verb|d| and \verb|e|.
+
+    \subsection{The algorithm}
+        I started from the simplest case: an empty graph, which wouldn't contain any negative cycle. I decided to return an impossible value ($666$) to signify that there is no negative cycle.
+
+        Then, I decided to try find cycles, starting from every arc.
+        \begin{lstlisting}
+def min_cycle(G = []):
+    if G == []:
+        return 666
+
+    arc = G.pop()
+    return min(min_from(G,
+                        arc.a,
+                        arc.b,
+                        arc.w,
+                        1),
+               min_cycle(G))
+        \end{lstlisting}
+        The function is working recursively: at each call, one arc from \verb|G| is removed, thus leading to the simplest case, the empty graph.
+
+        Now I have to define a function to try to find a cycle. This function will have several parameters. The graph containing the remaining arcs, the goal, the current root, the current length and the current sum of the weights.
+
+        This function will be recursive as well, and I start by defining the stopping cases:
+        \begin{itemize}
+            \item A cycle is found, and its weight is negative. 
+            \item The graph is empty.
+        \end{itemize}
+
+        So, our function start like that:
+        \begin{lstlisting}
+def min_from(G, goal, root, w, steps):
+    if root == goal and w < 0:
+        return steps
+
+    if G == []:
+        return 666
+        \end{lstlisting}
+
+        After that, I will call \verb|min_from| again for arcs starting from the current root. In the new call, I will remove the arc used (otherwise, it could lead to never ending cycles, if they are not negative), update the root, increment the number of steps and add the weight to the current sum.
+
+        Once it is done, I will return the minimum result between each calls. The function now look like that:
+        \begin{lstlisting}
+def min_from(G, goal, root, w, steps):
+    if root == goal and w < 0:
+        return steps
+
+    if G == []:
+        return 666
+
+    results = [666]
+    for arc in G:
+        if arc.a == root:
+            gc = G.copy()
+            gc.remove(arc)
+            results.append(min_from(gc, goal, arc.b, w + arc.w, steps + 1))
+
+    return min(results)
+        \end{lstlisting}
+
+    \subsection{Test}
+        With the example graph of section \ref{sec:2_setup}, the expected answer is $3$.
+        \begin{lstlisting}
+>>> min_cycle(g1)
+3
+        \end{lstlisting}
+
+        We can modify the graph a little bit, to remove the negative cycle, and replace it by a positive cycle. The new expected answer would be $666$.
+        \begin{lstlisting}
+>>> min_cycle(g1)
+666
+        \end{lstlisting}
+
+        Now, I will test what happen when there is two negative cycles. Starting again from \verb|g1|, I will now modify the values between \verb|a| and \verb|b| to create a new cycle. Since this cycle will be shorter, the new expected value will be 2.
+        \begin{lstlisting}
+>>> min_cycle(g1)
+2
+        \end{lstlisting}
+
+        Once again, it is working.

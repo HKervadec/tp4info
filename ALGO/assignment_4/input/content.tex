@@ -1,0 +1,16 @@
+\section{Description}
+    The aim of this assignment is to prove a lower bound for the problem given.
+
+\section{Example input and output} 
+    With the following input: \[ \{1,1,1,2,2,2,3,3,3\} ,\] there is two valid outputs: \[ \{\{1,1,1\},\{2,2,2\},\{3,3,3\}\}\] and \[ \{\{1,2,3\},\{1,2,3\},\{1,2,3\}\}.\]
+
+    We can see that just sorting the array will solve the problem.
+
+\section{Lower bound}
+    The basic operation is the comparison between two numbers.
+
+    If we represent the algorithm computation with a binary tree, with each branch representing a decision, the root being the input and the leaves being the output, we have a maximum number of leaves of $n!$ (the number of permutations of the input).
+
+    Therefore, the minimum length (between the root and the leaves) is $\log_2(n!)$ (because is it a binary tree). This minimum length correspond to the number of comparisons, let's call it $c$.
+
+    We now have \[ c \leq \log_2(n!)  ,\] which is equivalent to \[ c \leq n\log_2(n).\]

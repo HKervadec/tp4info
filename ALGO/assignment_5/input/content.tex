@@ -1,0 +1,22 @@
+\section{Description}
+    In this assignment, we must transform a real-world problem into a maximum flow problem.
+
+    There is $m$ students, and $n$ projects. Each project has a capacity, called $C$. A student can take a project only if he has the qualifications for. In short, each student can go into a subset of the projects.
+
+
+\section{Solution}
+    \begin{figure}
+        \includegraphics[width=1\textwidth]{include/graph.pdf}
+        \caption{An example of the problem transformed to a flow graph. $m=3$ and $n=4$.}
+        \label{fig:graph}
+    \end{figure}
+
+    In the Figure \ref{fig:graph}, we can clearly see different column. Each one a a specific purpose, to allow us to recreate the problem.
+
+    The first column "set" the number of students. It prevent us to have more than $m$ students in the solution. It sort of create the students.
+
+    The second column specify the allowed projects for each student. Therefore, a student can go only in the project where he is allowed to. It create a waiting room for each project.
+
+    The third column "empty" the waiting room, and fill the projects. 
+
+    The last one is used to finish the graph.
