@@ -1,7 +1,7 @@
 -- could be improved by using a max heap instead of sorting
 -- I don't want to implement a heap in haskell yet
-ksubunique :: [Int] -> Int -> [(Int, Int, Int)]
-ksubunique l k = take k (ksub (uniq l))
+kmaxsubunique :: [Int] -> Int -> [(Int, Int, Int)]
+kmaxsubunique l k = take k (ksub (uniq l))
 
 ksub :: [Int] -> [(Int, Int, Int)]
 ksub l = reverse (sort superList cmp)
