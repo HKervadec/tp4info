@@ -11,22 +11,22 @@ Carte::Carte(Couleur c, Valeur v, char p){
 	
 	if (p == 'N'){
 		if (Carte::Nd == NULL){
-			Carte::Nd == this;
-			Carte::Nf == this;
+			Carte::Nd = this;
+			Carte::Nf = this;
 		}
 		else{
 			Carte::Nf->next = this;
-			Carte::Nf == this;
+			Carte::Nf = this;
 		}
 	}
 	else {
 		if (Carte::Sd == NULL){
-			Carte::Sd == this;
-			Carte::Sf == this;
+			Carte::Sd = this;
+			Carte::Sf = this;
 		}
 		else{
 			Carte::Sf->next = this;
-			Carte::Sf == this;
+			Carte::Sf = this;
 		}
 	}
 }

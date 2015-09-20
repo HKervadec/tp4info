@@ -66,7 +66,7 @@ int main()
 		std::cout << std::endl;
 
 		// detection d'une bataille (i.e. les deux cartes ont la meme valeur)
-		while (0 != Nt && 0 != St && Nt->egale(*St))
+		while (0 != Nt && 0 != St && Nt->egale(St))
 		{
 			std::cout << "** bataille ** " << std::endl;
 			Nt = Nt->suc();
